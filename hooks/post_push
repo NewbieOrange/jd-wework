@@ -60,6 +60,6 @@ do
 
     echo "[---] BUILD_ARCH: ${BUILD_ARCH}"
 
-    docker push ${IMAGE_NAME}_${BUILD_ARCH}
+    docker push ${IMAGE_NAME}-${BUILD_ARCH}
 done
 
