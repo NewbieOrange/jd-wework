@@ -53,15 +53,17 @@ def get_users_count():
 
 
 def send_user_notification(user_id, title, content):
-    client.message.send_mp_articles(agent_id, user_id, [{
-        'thumb_media_id': image_id,
-        'author': '京东多合一签到',
-        'title': title,
-        'content': content.replace('\n', '<br/>'),
-        'content_source_url': '',
-        'digest': content,
-        'show_cover_pic': 1
-    }])
+    if image_id:
+        client.message.send_mp_articles(agent_id, user_id, [{
+            'thumb_media_id': image_id,
+            'author': '京东多合一签到',
+            'title': title,
+            'content': content.replace('\n', '<br/>'),
+            'content_source_url': '',
+            'digest': content
+        }])
+    else:
+        client.message.send_text(agent_id, user_id, f'京东多合一签到 - {title}\n{content}')
 
 
 def send_notification(title, content):
@@ -168,14 +170,14 @@ class RequestHandler(BaseHTTPRequestHandler):
             reply_xml = None
             if message.type != 'text' and message.type != 'event':
                 reply_xml = create_reply('不支持的消息类型', message).render()
-            elif message.type == 'event':
+            elif message.type == 'event' and message.event == 'click':
                 if message.key == 'login_jd':
                     if message.source not in qrcode_pending:
                         reply_xml = create_reply('使用京东App扫描下方二维码登录（有效期3分钟）', message).render()
             if reply_xml:
                 encrypted_xml = crypto.encrypt_message(reply_xml, nonce, timestamp)
                 self.wfile.write(encrypted_xml.encode())
-            if message.type == 'event':
+            if message.type == 'event' and message.event == 'click':
                 if message.key == 'login_jd':
                     if message.source not in qrcode_pending:
                         qrcode_pending.add(message.source)
@@ -212,8 +214,8 @@ def create_menu():
 
 if __name__ == '__main__':
     env = os.environ
-    for k, v in [("REDIS_HOST", "localhost"), ("REDIS_PORT", "6379"),
-                 ("REDIS_PWD", ""), ("WECHAT_CREATE_MENU", "True")]:
+    for k, v in [('REDIS_HOST', 'localhost'), ('REDIS_PORT', '6379'),
+                 ('REDIS_PWD', ''), ('WECHAT_CREATE_MENU', 'True'), ('IMAGE_ID', '')]:
         env.setdefault(k, v)
     redis_host = env["REDIS_HOST"]
     redis_port = int(env["REDIS_PORT"])
@@ -226,9 +228,8 @@ if __name__ == '__main__':
     wechat_create_menu = bool(distutils.util.strtobool(env['WECHAT_CREATE_MENU']))
     agent_id = env['AGENT_ID']
     image_id = env['IMAGE_ID']
-    for i in [redis_host, redis_port, redis_pwd, wechat_corp_id,
-              wechat_secret, wechat_crypto_token, wechat_crypto_encoding_aes_key,
-              agent_id, wechat_create_menu]:
+    for i in [redis_host, redis_port, redis_pwd, wechat_corp_id, wechat_secret,
+              wechat_crypto_token, wechat_crypto_encoding_aes_key, agent_id]:
         if i == 'set_it':
             logging.error(env.items())
             logging.error('部分变量未设置，请检查你的变量设置是否正确。')
