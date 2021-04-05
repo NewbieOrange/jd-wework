@@ -214,10 +214,10 @@ def create_menu():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
     env = os.environ
     for k, v in [('REDIS_HOST', 'localhost'), ('REDIS_PORT', '6379'),
-                 ('REDIS_PWD', ''), ('WECHAT_CREATE_MENU', 'True'), ('IMAGE_ID', '')]:
+                 ('REDIS_PWD', ''), ('WECHAT_CREATE_MENU', 'True'), ('IMAGE_ID', ''),
+                 ('DEBUG', 'False')]:
         env.setdefault(k, v)
     redis_host = env["REDIS_HOST"]
     redis_port = int(env["REDIS_PORT"])
@@ -227,9 +227,14 @@ if __name__ == '__main__':
     wechat_crypto_token = env['WECHAT_CRYPTO_TOKEN']
     wechat_crypto_encoding_aes_key = env['WECHAT_CRYPTO_AES_KEY']
     wechat_invite_code = env['WECHAT_INVITE_CODE']
-    wechat_create_menu = bool(distutils.util.strtobool(env['WECHAT_CREATE_MENU']))
+    wechat_create_menu = distutils.util.strtobool(env['WECHAT_CREATE_MENU'])
     agent_id = env['AGENT_ID']
     image_id = env['IMAGE_ID']
+    debug = distutils.util.strtobool(env['DEBUG'])
+    if debug:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
     for i in [redis_host, redis_port, redis_pwd, wechat_corp_id, wechat_secret,
               wechat_crypto_token, wechat_crypto_encoding_aes_key, agent_id,
               image_id]:
