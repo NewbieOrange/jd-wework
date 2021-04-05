@@ -14,6 +14,7 @@ from wechatpy.session.redisstorage import RedisStorage
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs, unquote
 from jd_qrcode_bot import generate_jd_qrcode
+import distutils.util
 import io
 import re
 import redis
@@ -222,7 +223,7 @@ if __name__ == '__main__':
     wechat_crypto_token = env['WECHAT_CRYPTO_TOKEN']
     wechat_crypto_encoding_aes_key = env['WECHAT_CRYPTO_AES_KEY']
     wechat_invite_code = env['WECHAT_INVITE_CODE']
-    wechat_create_menu = bool(env['WECHAT_CREATE_MENU'])
+    wechat_create_menu = bool(distutils.util.strtobool(env['WECHAT_CREATE_MENU']))
     agent_id = env['AGENT_ID']
     image_id = env['IMAGE_ID']
     for i in [redis_host, redis_port, redis_pwd, wechat_corp_id,
