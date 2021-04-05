@@ -1,0 +1,5 @@
+qrcode==6.1
+redis==3.5.3
+requests==2.25.1
+six==1.15.0
+wechatpy
