@@ -17,6 +17,7 @@ from jd_qrcode_bot import generate_jd_qrcode
 import io
 import re
 import redis
+import requests
 import logging
 import sys
 import threading
@@ -49,9 +50,9 @@ def get_user(uid):
 def update_user_cookie(uid, cookie):
     with open('/jd/config/config.sh', 'r+') as config_file:
         config = config_file.read()
-        config, ret = re.subn('Cookie%d='.*'' % uid, 'Cookie%d='%s'' % (uid, cookie), config, 1)
+        config, ret = re.subn('Cookie%d=".*"' % uid, 'Cookie%d="%s"' % (uid, cookie), config, 1)
         if not ret:
-            config = config.replace('\n## 注入 Cookie 于此处 （自动化注释）', '\nCookie%d='%s'\n## 注入 Cookie 于此处 （自动化注释）' % (uid, cookie), 1)
+            config = config.replace('\n## 注入 Cookie 于此处 （自动化注释）', '\nCookie%d="%s"\n## 注入 Cookie 于此处 （自动化注释）' % (uid, cookie), 1)
         config_file.seek(0)
         config_file.write(config)
         config_file.truncate()
@@ -159,6 +160,17 @@ def run(server_class=HTTPServer, handler_class=RequestHandler, port=5676):
     logging.info('Stopping httpd...\n')
 
 
+def create_menu():
+    resp = requests.get(f'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={wechat_corp_id}&corpsecret={wechat_secret}')
+    token = json.loads(resp.text)['access_token']
+    menu = [{'type': 'click', 'name': '登录京东', 'key': 'login_jd'}]
+    if wechat_invite_code:
+        menu.append({'type': 'click', 'name': '内推链接', 'key': 'invite_link'})
+    requests.post(f'https://qyapi.weixin.qq.com/cgi-bin/menu/create?access_token={token}&agentid={agent_id}', data={
+        'button': menu
+    })
+
+
 if __name__ == '__main__':
     env = os.environ
     redis_host = getattr(env, 'REDIS_HOST', 'localhost')
@@ -169,6 +181,7 @@ if __name__ == '__main__':
     wechat_crypto_token = getattr(env, 'WECHAT_CRYPTO_TOKEN')
     wechat_crypto_encoding_aes_key = getattr(env, 'WECHAT_CRYPTO_AES_KEY')
     wechat_invite_code = getattr(env, 'WECHAT_INVITE_CODE')
+    wechat_create_menu = bool(getattr(env, 'WECHAT_CREATE_MENU', 'True'))
     agent_id = getattr(env, 'AGENT_ID')
     for i in [redis_host, redis_port, redis_pwd, wechat_corp_id, wechat_secret, wechat_crypto_token, wechat_crypto_encoding_aes_key, agent_id]:
         if i == 'set_it':
@@ -176,6 +189,8 @@ if __name__ == '__main__':
             logging.error('部分变量未设置，请检查你的变量设置是否正确。')
             time.sleep(30)
             exit(-1)
+    if wechat_create_menu:
+        create_menu()
     r = redis.Redis(host=redis_host, port=redis_port, db=0, password=redis_pwd)
     crypto = WeChatCrypto(token=wechat_crypto_token, encoding_aes_key=wechat_crypto_encoding_aes_key,
                           corp_id=wechat_corp_id)
