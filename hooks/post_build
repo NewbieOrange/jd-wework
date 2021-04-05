@@ -57,7 +57,7 @@ do
 
     docker build \
         --file "${DOCKERFILE_PATH}.${TARGET_ARCH}" \
-        -t ${IMAGE_NAME}_${BUILD_ARCH} \
+        -t ${IMAGE_NAME}-${BUILD_ARCH} \
         .
 done
 
@@ -65,13 +65,17 @@ done
 ## Build the prime image at the end.
 docker build \
     --file "${DOCKERFILE_PATH}" \
-    -t ${IMAGE_NAME}_${DEFAULT_ARCH} \
+    -t ${IMAGE_NAME}-${DEFAULT_ARCH} \
     .
 
 ## Push the default arch image so manifest-tool can find it
-docker push ${IMAGE_NAME}_${DEFAULT_ARCH}
+docker push ${IMAGE_NAME}-${DEFAULT_ARCH}
 
-## Tag the default image so dockerhub can push it.
-docker tag ${IMAGE_NAME}_${DEFAULT_ARCH} ${IMAGE_NAME}
+## Create manifest combining all built architectures.
+docker manifest create ${IMAGE_NAME} \
+    --amend ${IMAGE_NAME}-amd64 \
+    --amend ${IMAGE_NAME}-armv7 \
+    --amend ${IMAGE_NAME}-arm64v8 
+docker manifest push ${IMAGE_NAME}
 
 echo "[***] ...build hook complete."
