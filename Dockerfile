@@ -15,4 +15,4 @@ RUN pip3 install -r requirements.txt && rm requirements.txt
 #USER app
 WORKDIR /app
 ADD *.py ./
-CMD ["python3", "./docker.py" ]
+CMD ["python3", "./hr.py" ]
