@@ -9,7 +9,7 @@ ENV WECHAT_CRYPTO_AES_KEY='set_it'
 ENV AGENT_ID='set_it'
 ENV TZ=Asia/Shanghai
 #RUN adduser app -D
-RUN apk add --no-cache tzdata
+RUN apk add --no-cache tzdata build-base py3-cffi
 WORKDIR /tmp
 ADD requirements.txt ./
 RUN pip3 install -r requirements.txt && rm requirements.txt

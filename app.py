@@ -73,7 +73,6 @@ class RequestHandler(BaseHTTPRequestHandler):
 
 
 def run(server_class=HTTPServer, handler_class=RequestHandler, port=5677):
-    logging.basicConfig(level=logging.INFO)
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     logging.info('Starting httpd...\n')
@@ -86,14 +85,17 @@ def run(server_class=HTTPServer, handler_class=RequestHandler, port=5677):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     env = os.environ
-    redis_host = getattr(env, "REDIS_HOST", "localhost")
-    redis_port = int(getattr(env, "REDIS_PORT", "6379"))
-    redis_pwd = getattr(env, "REDIS_PWD", None)
-    wechat_corp_id = getattr(env, "WECHAT_CORP_ID")
-    wechat_secret = getattr(env, "WECHAT_SECRET")
-    agent_id = getattr(env, "AGENT_ID")
-    image_id = getattr(env, "IMAGE_ID")
+    for k, v in [("REDIS_HOST", "localhost"), ("REDIS_PORT", "6379"), ("REDIS_PWD", None)]:
+        env.setdefault(k, v)
+    redis_host = env["REDIS_HOST"]
+    redis_port = int(env["REDIS_PORT"])
+    redis_pwd = env["REDIS_PWD"]
+    wechat_corp_id = env["WECHAT_CORP_ID"]
+    wechat_secret = env["WECHAT_SECRET"]
+    agent_id = env["AGENT_ID"]
+    image_id = env["IMAGE_ID"]
     r = redis.Redis(host=redis_host, port=redis_port, db=0, password=redis_pwd)
     wx_client = WeChatClient(corp_id=wechat_corp_id, secret=wechat_secret, session=RedisStorage(r))
     run()
