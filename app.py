@@ -215,9 +215,8 @@ def create_menu():
 
 if __name__ == '__main__':
     env = os.environ
-    for k, v in [('REDIS_HOST', 'localhost'), ('REDIS_PORT', '6379'),
-                 ('REDIS_PWD', ''), ('WECHAT_CREATE_MENU', 'True'), ('IMAGE_ID', ''),
-                 ('DEBUG', 'False')]:
+    for k, v in [('REDIS_HOST', 'localhost'), ('REDIS_PORT', '6379'), ('REDIS_PWD', ''),
+                 ('WECHAT_CREATE_MENU', 'True'), ('IMAGE_ID', ''), ('DEBUG', 'False')]:
         env.setdefault(k, v)
     redis_host = env["REDIS_HOST"]
     redis_port = int(env["REDIS_PORT"])
@@ -231,13 +230,9 @@ if __name__ == '__main__':
     agent_id = env['AGENT_ID']
     image_id = env['IMAGE_ID']
     debug = distutils.util.strtobool(env['DEBUG'])
-    if debug:
-        logging.basicConfig(level=logging.DEBUG)
-    else:
-        logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
     for i in [redis_host, redis_port, redis_pwd, wechat_corp_id, wechat_secret,
-              wechat_crypto_token, wechat_crypto_encoding_aes_key, agent_id,
-              image_id]:
+              wechat_crypto_token, wechat_crypto_encoding_aes_key, agent_id]:
         if i == 'set_it':
             logging.error(env.items())
             logging.error('部分变量未设置，请检查你的变量设置是否正确。')
