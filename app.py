@@ -211,7 +211,8 @@ def create_menu():
 
 if __name__ == '__main__':
     env = os.environ
-    for k, v in [("REDIS_HOST", "localhost"), ("REDIS_PORT", "6379"), ("REDIS_PWD", ""),("WECHAT_CREATE_MENU", "True")]:
+    for k, v in [("REDIS_HOST", "localhost"), ("REDIS_PORT", "6379"),
+                 ("REDIS_PWD", ""), ("WECHAT_CREATE_MENU", "True")]:
         env.setdefault(k, v)
     redis_host = env["REDIS_HOST"]
     redis_port = int(env["REDIS_PORT"])
