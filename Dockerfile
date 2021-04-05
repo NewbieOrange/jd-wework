@@ -6,7 +6,6 @@ ENV WECHAT_SECRET='set_it'
 ENV WECHAT_CRYPTO_TOKEN='set_it'
 ENV WECHAT_CRYPTO_AES_KEY='set_it'
 ENV AGENT_ID='set_it'
-ENV IMAGE_ID='set_it'
 ENV TZ=Asia/Shanghai
 #RUN adduser app -D
 WORKDIR /app
