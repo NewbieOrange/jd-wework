@@ -14,6 +14,7 @@ from wechatpy.session.redisstorage import RedisStorage
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs, unquote
 from jd_qrcode import generate_jd_qrcode
+import jd_qrcode
 import distutils.util
 import io
 import re
@@ -244,4 +245,6 @@ if __name__ == '__main__':
     crypto = WeChatCrypto(token=wechat_crypto_token, encoding_aes_key=wechat_crypto_encoding_aes_key,
                           corp_id=wechat_corp_id)
     client = WeChatClient(corp_id=wechat_corp_id, secret=wechat_secret, session=RedisStorage(r))
+    # 启用京东登录事件循环
+    jd_qrcode.start_loop()
     run()
