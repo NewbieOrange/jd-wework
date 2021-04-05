@@ -20,20 +20,6 @@ curl -Lo manifest-tool ${TOOL_DOWNLOAD_URL}/${TOOL_LATEST_TAG}/manifest-tool-lin
 chmod +x manifest-tool
 
 
-## add_tag will add a tag and a manifest for each version
-function add_tag() {
-    echo "[***] Adding tag ${1}"
-    docker tag $IMAGE_NAME $DOCKER_REPO:$1
-    docker push $DOCKER_REPO:$1
-
-    echo "[---] Running ./manifest-tool push from-args --platforms '${2}' --template '${IMAGE_NAME}_ARCHVARIANT' --target '${DOCKER_REPO}:${1}'"
-    ./manifest-tool push from-args \
-        --platforms ${2} \
-        --template ${IMAGE_NAME}_ARCHVARIANT \
-        --target ${DOCKER_REPO}:${1}
-}
-
-
 ## Push all variant images
 ## must be done in post_push
 for FILE in ${DOCKERFILE_PATH}.*
@@ -63,3 +49,7 @@ do
     docker push ${IMAGE_NAME}-${BUILD_ARCH}
 done
 
+./manifest-tool push from-args \
+    --platforms linux/amd64,linux/armv7,linux/arm64v8 \
+    --template ${IMAGE_NAME}-ARCHVARIANT \
+    --target ${IMAGE_NAME}
