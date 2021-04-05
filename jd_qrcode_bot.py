@@ -1,10 +1,18 @@
 import asyncio
 import logging
 import time
+import threading
 from datetime import timedelta
 
 from mk_qrcore import JDQrCode
 _loop = asyncio.new_event_loop()
+_thread: threading.Thread
+
+
+def start_loop():
+    global _thread
+    _thread = threading.Thread(target=_loop.run_forever)
+    _thread.start()
 
 
 async def wait_for_login(user_id: str, qrcode: JDQrCode, callback):
@@ -36,6 +44,6 @@ async def wait_for_login(user_id: str, qrcode: JDQrCode, callback):
 async def generate_jd_qrcode(user_id, callback):
     jd_qrcode = JDQrCode()
     await jd_qrcode.init()
-    qrcode = jd_qrcode.generate_jd_qrcode()
+    qrcode = await jd_qrcode.generate_jd_qrcode()
     asyncio.run_coroutine_threadsafe(wait_for_login(user_id, jd_qrcode, callback), _loop)
     return qrcode
