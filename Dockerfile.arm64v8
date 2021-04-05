@@ -12,7 +12,7 @@ ENV TZ=Asia/Shanghai
 WORKDIR /app
 COPY requirements.txt ./requirements.txt
 #RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
-RUN apk add --no-cache python3 py3-pip py3-cryptography &&\
+RUN apk add --no-cache python3 py3-pip py3-cryptography py3-pillow &&\
 pip3 install -r requirements.txt
 ADD *.py ./
 #USER app

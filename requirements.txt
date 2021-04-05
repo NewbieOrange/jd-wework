@@ -4,3 +4,4 @@ requests==2.25.1
 six==1.15.0
 wechatpy==1.8.15
 cryptography>=3.3.2<=3.4.6
+Pillow>=7.2<=8.1.2
