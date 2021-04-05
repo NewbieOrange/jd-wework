@@ -47,6 +47,6 @@ do
 done
 
 ./manifest-tool push from-args \
-    --platforms linux/amd64,linux/armv7,linux/arm64v8 \
+    --platforms linux/amd64,linux/arm/v7,linux/arm64/v8 \
     --template ${IMAGE_NAME}-ARCHVARIANT \
     --target ${IMAGE_NAME}
