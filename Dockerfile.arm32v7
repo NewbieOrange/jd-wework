@@ -7,6 +7,7 @@ ENV WECHAT_SECRET='set_it'
 ENV WECHAT_CRYPTO_TOKEN='set_it'
 ENV WECHAT_CRYPTO_AES_KEY='set_it'
 ENV AGENT_ID='set_it'
+ENV IMAGE_ID='set_it'
 ENV TZ=Asia/Shanghai
 #RUN adduser app -D
 RUN apk add --no-cache tzdata
@@ -16,4 +17,4 @@ RUN pip3 install -r requirements.txt && rm requirements.txt
 #USER app
 WORKDIR /app
 ADD *.py ./
-CMD ["python3", "./hr.py" ]
+CMD ["python3", "./app.py" ]
