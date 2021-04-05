@@ -13,7 +13,7 @@ from wechatpy.enterprise import parse_message, create_reply
 from wechatpy.session.redisstorage import RedisStorage
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs, unquote
-from jd_qrcode_bot import generate_jd_qrcode
+from jd_qrcode import generate_jd_qrcode
 import distutils.util
 import io
 import re

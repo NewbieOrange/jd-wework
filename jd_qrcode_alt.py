@@ -7,12 +7,12 @@ pool = Pool(processes=3)
 
 
 def _generate_jd_qrcode():
-    p = subprocess.Popen(['docker', 'exec', '-it', 'jd', 'jtask', 'getJDCookie', 'now'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    p = subprocess.Popen(['docker', 'exec', 'jd', 'jtask', 'getJDCookie', 'now'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     while True:
         retcode = p.poll() 
         line = p.stdout.readline()
         if line:
-            yield line.decode('utf-8').rstrip('\r\n')
+            yield line.decode('utf-8').rstrip('\n')
         if retcode is not None:
             break
     p.stdout.close()
