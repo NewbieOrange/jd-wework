@@ -207,7 +207,7 @@ def create_menu():
     menu = [{'type': 'click', 'name': '登录京东', 'key': 'login_jd'}]
     if wechat_invite_code:
         menu.append({'type': 'click', 'name': '内推链接', 'key': 'invite_link'})
-    requests.post(f'https://qyapi.weixin.qq.com/cgi-bin/menu/create?access_token={token}&agentid={agent_id}', data={
+    requests.post(f'https://qyapi.weixin.qq.com/cgi-bin/menu/create?access_token={token}&agentid={agent_id}', json={
         'button': menu
     })
 
