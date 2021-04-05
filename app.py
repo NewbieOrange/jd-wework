@@ -187,7 +187,6 @@ class RequestHandler(BaseHTTPRequestHandler):
 
 
 def run(server_class=HTTPServer, handler_class=RequestHandler, port=5677):
-    logging.basicConfig(level=logging.INFO)
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     logging.info('Starting httpd...\n')
@@ -201,16 +200,19 @@ def run(server_class=HTTPServer, handler_class=RequestHandler, port=5677):
 
 def create_menu():
     resp = requests.get(f'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={wechat_corp_id}&corpsecret={wechat_secret}')
-    token = json.loads(resp.text)['access_token']
+    logging.debug(json.dumps(resp.json(), indent=4))
+    token = resp.json()['access_token']
     menu = [{'type': 'click', 'name': '登录京东', 'key': 'login_jd'}]
     if wechat_invite_code:
         menu.append({'type': 'click', 'name': '内推链接', 'key': 'invite_link'})
-    requests.post(f'https://qyapi.weixin.qq.com/cgi-bin/menu/create?access_token={token}&agentid={agent_id}', data={
+    retx1 = requests.post(f'https://qyapi.weixin.qq.com/cgi-bin/menu/create?access_token={token}&agentid={agent_id}', data={
         'button': menu
     })
+    logging.debug(json.dumps(retx1.json(), indent=4))
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     env = os.environ
     for k, v in [("REDIS_HOST", "localhost"), ("REDIS_PORT", "6379"),
                  ("REDIS_PWD", ""), ("WECHAT_CREATE_MENU", "True")]:
