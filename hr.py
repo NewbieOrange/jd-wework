@@ -49,9 +49,11 @@ def get_user(uid):
 def update_user_cookie(uid, cookie):
     with open('/jd/config/config.sh', 'r+') as config_file:
         config = config_file.read()
-        config, ret = re.subn('Cookie%d='.*'' % uid, 'Cookie%d='%s'' % (uid, cookie), config, 1)
+        config, ret = re.subn(f'Cookie{uid}=.*', f'Cookie{uid}={cookie}', config, 1)
         if not ret:
-            config = config.replace('\n## 注入 Cookie 于此处 （自动化注释）', '\nCookie%d='%s'\n## 注入 Cookie 于此处 （自动化注释）' % (uid, cookie), 1)
+            config = config.replace(f'\n## 注入 Cookie 于此处 （自动化注释）',
+                                    f'\nCookie{uid}={cookie}'
+                                    f'\n## 注入 Cookie 于此处 （自动化注释）', 1)
         config_file.seek(0)
         config_file.write(config)
         config_file.truncate()
