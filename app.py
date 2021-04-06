@@ -35,7 +35,7 @@ agent_id: str
 
 def add_user(user_id):
     uid = r.incr('users_cnt')
-    r.zadd('users', uid, user_id)
+    r.zadd('users', {user_id: uid})
     return uid
 
 
