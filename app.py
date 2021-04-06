@@ -70,7 +70,6 @@ def send_user_notification(user_id, title, content):
 def send_notification(title, content):
     it = re.finditer('号[ ]?([0-9]+)', content)
     for part in it:
-        is_broadcast = False
         begin = content.rfind('\n', 0, part.start()) + 1
         end = content.find('\n\n', begin)
         end = len(content) if end == -1 else end
