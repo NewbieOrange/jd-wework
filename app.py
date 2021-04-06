@@ -69,17 +69,13 @@ def send_user_notification(user_id, title, content):
 
 def send_notification(title, content):
     is_broadcast = True
-    for i in range(1, get_users_count() + 1):
-        begin = content.find('账号' + str(i))
-        if begin == -1:
-            begin = content.find('号 ' + str(i))
-        if begin == -1:
-            continue
+    it = re.finditer('号[ ]?([0-9]+)', content)
+    for part in it:
         is_broadcast = False
-        begin = content.rfind('\n', 0, begin) + 1
+        begin = content.rfind('\n', 0, part.start()) + 1
         end = content.find('\n\n', begin)
         end = len(content) if end == -1 else end
-        send_user_notification(get_user(i), title, content[begin:end])
+        send_user_notification(get_user(int(part.group(1))), title, content[begin:end])
     if is_broadcast:
         send_user_notification('@all', title, content)
 
