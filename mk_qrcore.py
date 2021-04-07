@@ -6,7 +6,7 @@ import qrcode
 
 import requests
 
-_user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+_user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) ' \
 'Chrome/86.0.4240.111 Safari/537.36'
 
 
@@ -128,6 +128,7 @@ class JDQrCode:
             'Content-Type': 'application/x-www-form-urlencoded; Charset=UTF-8',
             'Accept': 'application/json, text/plain, */*',
             'User-Agent': _user_agent,
+            'Host': 'plogin.m.jd.com'
         }
         respx = requests.post(
             f"https://plogin.m.jd.com/cgi-bin/m/tmauthchecktoken?&token={self.token}&ou_state=0&okl_token={self.okl_token}",
