@@ -120,8 +120,8 @@ def send_jd_qrcode(user_id):
 
 def send_invite_link(user_id):
     client.message.send_text_card(agent_id, user_id, '内推链接', '点击加入我司',
-                                  'https://work.weixin.qq.com/wework_admin/'
-                                  f'join?vcode={wechat_invite_code}&r=hb_share_wqq', '长按转发')
+                                  f'https://work.weixin.qq.com/join/{wechat_invite_code}/hb_share_mng_mjoin',
+                                  '长按转发')
 
 
 class RequestHandler(BaseHTTPRequestHandler):
