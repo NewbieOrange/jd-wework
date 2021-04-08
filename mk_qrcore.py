@@ -140,5 +140,5 @@ class JDQrCode:
         if resp['errcode'] == 0:
             set_cookie = respx.headers['set-cookie'].split(';')
             _cookie = _read_cookies(set_cookie)
-            _cookie = f"pt_key={_cookie['pt_key']};pt_pin={_cookie['pt_pin']}"
+            _cookie = f"pt_key={_cookie['pt_key']};pt_pin={_cookie['pt_pin']};"
         return resp['errcode'], _cookie, resp
