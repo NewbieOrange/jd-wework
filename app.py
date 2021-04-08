@@ -77,7 +77,10 @@ def send_notification(title, content):
         debug_ret = json.dumps({'标题': title, '内容': content[begin:end], '推送用户': get_user(part.group(1))}
                                , indent=4, ensure_ascii=False)
         logging.debug(f"推送消息：{debug_ret}")
-        send_user_notification(get_user(part.group(1)), title, content[begin:end])
+        user = get_user(part.group(1))
+        # 检查用户是否存在，不存在不推送消息。
+        if user:
+            send_user_notification(user, title, content[begin:end])
     if not it:
         debug_ret = json.dumps({'标题': title, '内容': content, 'user': "所有人"}
                                , indent=4, ensure_ascii=False)
