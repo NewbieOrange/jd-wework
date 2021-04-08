@@ -58,6 +58,7 @@ def send_user_notification(user_id, title, content):
         client.message.send_mp_articles(agent_id, user_id, [{
             'thumb_media_id': image_id,
             'author': '京东多合一签到',
+            'show_cover_pic': 1,
             'title': title,
             'content': content.replace('\n', '<br/>'),
             'content_source_url': '',
@@ -73,8 +74,12 @@ def send_notification(title, content):
         begin = content.rfind('\n', 0, part.start()) + 1
         end = content.find('\n\n', begin)
         end = len(content) if end == -1 else end
+        debug_ret = json.dumps({'标题': title, '内容': content[begin:end], '推送用户': get_user(part.group(1))})
+        logging.debug(f"推送消息：{debug_ret}")
         send_user_notification(get_user(part.group(1)), title, content[begin:end])
     if not it:
+        debug_ret = json.dumps({'标题': title, '内容': content, 'user': "所有人"})
+        logging.debug(f"推送消息：{debug_ret}")
         send_user_notification('@all', title, content)
 
 
