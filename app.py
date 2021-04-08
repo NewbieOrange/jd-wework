@@ -133,7 +133,7 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         logging.info('GET request from %s', str(self.client_address))
         self._set_response()
-        params = parse_qs(urlparse(self.path).query)
+        params = parse_qs(urlparse(self.path).query, keep_blank_values=True)
         if 'sound' in params:  # Bark server: handle notification
             message = self.path.split('?', 1)[0]
             title, content = [unquote(s) for s in message.split('/')[-2:]]
