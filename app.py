@@ -72,7 +72,7 @@ def send_notification(title, content):
     it = re.finditer('号[ ]?([0-9]+)', content)
     for part in it:
         begin = content.rfind('\n', 0, part.start()) + 1
-        end = content.find('\n\n', begin)
+        end = content.rfind('\n', begin, content.find('号', content.find('\n', begin)))
         end = len(content) if end == -1 else end
         debug_ret = json.dumps({'标题': title, '内容': content[begin:end], '推送用户': get_user(part.group(1))}
                                , indent=4, ensure_ascii=False)
