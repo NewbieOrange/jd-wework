@@ -1,0 +1,33 @@
+version: "3.7"
+
+services:
+  jd_wework:
+    image: newbieorange/jd-wework
+    # 如果你使用反向代理的话可以不映射这个接口，这个是企业微信的消息接收端回调接口。
+    ports:
+      - mode: host
+        target: 5677
+        published: 5677
+    environment:
+      REDIS_HOST: redis
+      WECHAT_CORP_ID: set_it # 企业微信公司id 必填
+      WECHAT_CRYPTO_TOKEN: set_it # 企业微信通信TOKEN 必填
+      WECHAT_CRYPTO_AES_KEY: set_it # 企业微信通信AES密钥 必填
+      WECHAT_INVITE_CODE: set_it # 邀请码，可以不填，这个功能暂时有问题
+      AGENT_ID: set_it # 企业微信AGENT_ID
+      WECHAT_SECRET: set_it # 企业微信SECRET密码
+      IMAGE_ID: set_it # 图片ID 如果不填的话推送消息不显示图片
+      WECHAT_CREATE_MENU: 'True' # 第一次
+      DEBUG: 'False' # 除错模式，出问题了可以开启查看详细除错日志
+    volumes:
+      - jd_cfg:/jd/config # 设置为和你JD_SCRIPTS 相同的目录，让本程序可以操作你的配置文件。
+    restart: always
+  # 本项目使用了redis数据库用于存储，还需要部署一个redis数据库。
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+    restart: always
+volumes:
+  jd_cfg:
+  redis_data:

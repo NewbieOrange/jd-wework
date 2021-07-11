@@ -127,6 +127,7 @@ class JDQrCode:
             'Content-Type': 'application/x-www-form-urlencoded; Charset=UTF-8',
             'Accept': 'application/json, text/plain, */*',
             'User-Agent': _user_agent,
+            'Host': 'plogin.m.jd.com'
         }
         respx = requests.post(
             f"https://plogin.m.jd.com/cgi-bin/m/tmauthchecktoken?&token={self.token}&ou_state=0&okl_token={self.okl_token}",
@@ -138,5 +139,5 @@ class JDQrCode:
         if resp['errcode'] == 0:
             set_cookie = respx.headers['set-cookie'].split(';')
             _cookie = _read_cookies(set_cookie)
-            _cookie = f"pt_key={_cookie['pt_key']};pt_pin={_cookie['pt_pin']}"
+            _cookie = f"pt_key={_cookie['pt_key']};pt_pin={_cookie['pt_pin']};"
         return resp['errcode'], _cookie, resp

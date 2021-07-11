@@ -58,6 +58,7 @@ def send_user_notification(user_id, title, content):
         client.message.send_mp_articles(agent_id, user_id, [{
             'thumb_media_id': image_id,
             'author': '京东多合一签到',
+            'show_cover_pic': 1,
             'title': title,
             'content': content.replace('\n', '<br/>'),
             'content_source_url': '',
@@ -68,19 +69,22 @@ def send_user_notification(user_id, title, content):
 
 
 def send_notification(title, content):
-    is_broadcast = True
-    for i in range(1, get_users_count() + 1):
-        begin = content.find('账号' + str(i))
-        if begin == -1:
-            begin = content.find('号 ' + str(i))
-        if begin == -1:
-            continue
-        is_broadcast = False
-        begin = content.rfind('\n', 0, begin) + 1
+    it = re.finditer('号[ ]?([0-9]+)', content)
+    for part in it:
+        begin = content.rfind('\n', 0, part.start()) + 1
         end = content.find('\n\n', begin)
         end = len(content) if end == -1 else end
-        send_user_notification(get_user(i), title, content[begin:end])
-    if is_broadcast:
+        debug_ret = json.dumps({'标题': title, '内容': content[begin:end], '推送用户': get_user(part.group(1))}
+                               , indent=4, ensure_ascii=False)
+        logging.debug(f"推送消息：{debug_ret}")
+        user = get_user(part.group(1))
+        # 检查用户是否存在，不存在不推送消息。
+        if user:
+            send_user_notification(user, title, content[begin:end])
+    if not it:
+        debug_ret = json.dumps({'标题': title, '内容': content, 'user': "所有人"}
+                               , indent=4, ensure_ascii=False)
+        logging.debug(f"推送消息：{debug_ret}")
         send_user_notification('@all', title, content)
 
 
@@ -126,8 +130,8 @@ def send_jd_qrcode(user_id):
 
 def send_invite_link(user_id):
     client.message.send_text_card(agent_id, user_id, '内推链接', '点击加入我司',
-                                  'https://work.weixin.qq.com/wework_admin/'
-                                  f'join?vcode={wechat_invite_code}&r=hb_share_wqq', '长按转发')
+                                  f'https://work.weixin.qq.com/join/{wechat_invite_code}/hb_share_mng_mjoin',
+                                  '长按转发')
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -139,7 +143,7 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         logging.info('GET request from %s', str(self.client_address))
         self._set_response()
-        params = parse_qs(urlparse(self.path).query)
+        params = parse_qs(urlparse(self.path).query, keep_blank_values=True)
         if 'sound' in params:  # Bark server: handle notification
             message = self.path.split('?', 1)[0]
             title, content = [unquote(s) for s in message.split('/')[-2:]]
