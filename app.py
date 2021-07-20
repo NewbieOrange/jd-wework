@@ -74,13 +74,14 @@ def send_notification(title, content):
         begin = content.rfind('\n', 0, part.start()) + 1
         end = content.rfind('\n', begin, content.find('号', content.find('\n', begin)))
         end = len(content) if end == -1 else end
-        debug_ret = json.dumps({'标题': title, '内容': content[begin:end], '推送用户': get_user(part.group(1))}
+        user_content = content[begin:end].rstrip()
+        debug_ret = json.dumps({'标题': title, '内容': user_content, '推送用户': get_user(part.group(1))}
                                , indent=4, ensure_ascii=False)
         logging.debug(f"推送消息：{debug_ret}")
         user = get_user(part.group(1))
         # 检查用户是否存在，不存在不推送消息。
         if user:
-            send_user_notification(user, title, content[begin:end])
+            send_user_notification(user, title, user_content)
     if not it:
         debug_ret = json.dumps({'标题': title, '内容': content, 'user': "所有人"}
                                , indent=4, ensure_ascii=False)
